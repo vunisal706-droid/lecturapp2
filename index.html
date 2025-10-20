@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LecturApp - CEIP Capitulaciones</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+    body { font-family: 'Nunito', system-ui, sans-serif; margin: 0; padding: 0; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { BookOpen, Settings, Star, Check, X, RotateCcw, Home, Sparkles, Clock, Target, Book, Languages } = window.lucide || {};
+    
+    function Icon({ icon: IconComponent, ...props }) {
+      if (!IconComponent) return null;
+      return <IconComponent {...props} />;
+    }
+    
+    // Tu código completo de LecturApp aquí
+    // Por ahora una demo funcional
+    
+    function LecturApp() {
+      const [darkMode, setDarkMode] = React.useState(false);
+      
+      return (
+        <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'} flex flex-col`}>
+          <div className="flex-1 flex items-center justify-center p-8">
+            <div className="text-center max-w-2xl">
+              <div className="text-8xl mb-6">📚⭐</div>
+              <h1 className={`text-6xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                LecturApp
+              </h1>
+              <p className={`text-2xl ${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-2`}>
+                Lee, imagina y aprende a tu ritmo
+              </p>
+              <p className={`text-xl font-semibold ${darkMode ? 'text-blue-400' : 'text-blue-600'} mb-8`}>
+                CEIP Capitulaciones
+              </p>
+              
+              <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl p-8 mb-8`}>
+                <p className={`text-xl ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-6`}>
+                  🎯 <strong>Modo Libre:</strong> Lectura flexible<br/>
+                 ⏱️ <strong>Modo Planificado:</strong> 30 min estructurados<br/>
+                  🌍 <strong>Multiidioma:</strong> Español, Inglés, Francés<br/>
+                  📝 <strong>7 tipos de texto:</strong> Narrativo, Expositivo, Poético...
+                </p>
+                
+                <button
+                  onClick={() => window.open('https://claude.site', '_blank')}
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-10 py-5 rounded-xl text-xl font-bold shadow-xl transform transition hover:scale-105 w-full"
+                >
+                  ✨ Ver versión completa online
+                </button>
+              </div>
+
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                className={`${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} px-8 py-4 rounded-xl transition text-lg font-semibold`}
+              >
+                {darkMode ? '🌙 Modo oscuro' : '☀️ Modo claro'}
+              </button>
+            </div>
+          </div>
+          
+          <footer className="py-6 text-center">
+            <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+              Made by Víctor with <span className="text-red-500 text-base animate-pulse">❤️</span>
+            </p>
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<LecturApp />);
+  </script>
+  
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</body>
+</html>
