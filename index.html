@@ -1164,8 +1164,13 @@
                     `;
                 });
                 
-                if (!app.respuestasUsuario[indice]?.respondida) {
+                // Solo mostrar botón de verificar si hay una respuesta correcta definida
+                const tieneRespuestaCorrecta = pregunta.opciones.some(op => op.esCorrecta);
+                
+                if (!app.respuestasUsuario[indice]?.respondida && tieneRespuestaCorrecta) {
                     html += '<button class="btn btn-success" style="margin-top: 20px;" onclick="verificarRespuesta(' + indice + ')">✓ Verificar respuesta</button>';
+                } else if (!tieneRespuestaCorrecta) {
+                    html += '<div class="alert alert-info" style="margin-top: 20px;">💭 Esta es una pregunta de reflexión. No hay respuestas incorrectas. Pulsa "Siguiente" para continuar.</div>';
                 }
             }
             
@@ -1200,9 +1205,14 @@
         }
 
         function mostrarResultado() {
-            const total = app.lecturaData.preguntas.length;
+            // Contar solo preguntas que tienen respuesta correcta definida
+            const preguntasEvaluables = app.lecturaData.preguntas.filter(p => 
+                p.opciones && p.opciones.some(op => op.esCorrecta)
+            );
+            
+            const total = preguntasEvaluables.length;
             const correctas = app.respuestasUsuario.filter(r => r.correcta).length;
-            const porcentaje = Math.round((correctas / total) * 100);
+            const porcentaje = total > 0 ? Math.round((correctas / total) * 100) : 100;
             
             let emoji = '🎉';
             let mensaje = '¡Excelente trabajo!';
@@ -1214,14 +1224,22 @@
                 mensaje = '¡Muy bien!';
             }
             
-            const html = `
+            let html = `
                 <div class="resultado-final">
                     <div style="font-size: 5em;">${emoji}</div>
                     <h2 style="color: #667eea; margin: 20px 0;">${mensaje}</h2>
+            `;
+            
+            if (total > 0) {
+                html += `
                     <div class="puntuacion">${correctas} / ${total}</div>
                     <div style="font-size: 1.5em; color: #6b7280;">${porcentaje}% de respuestas correctas</div>
-                </div>
-            `;
+                `;
+            } else {
+                html += `<div style="font-size: 1.3em; color: #6b7280; margin: 20px 0;">Has completado todas las actividades de reflexión</div>`;
+            }
+            
+            html += '</div>';
             
             document.getElementById('contenido-interactivo').innerHTML = html;
         }
@@ -1230,12 +1248,24 @@
             const data = app.lecturaData;
             const totalPasos = 4 + data.preguntas.length;
             
-            // Si estamos en una pregunta, verificar que se haya respondido
+            // Si estamos en una pregunta, verificar que se haya respondido (si tiene opciones)
             if (app.pasoActual >= 2 && app.pasoActual < 2 + data.preguntas.length) {
                 const indicePregunta = app.pasoActual - 2;
-                if (!app.respuestasUsuario[indicePregunta]?.respondida) {
-                    alert('Por favor, verifica tu respuesta antes de continuar');
-                    return;
+                const pregunta = data.preguntas[indicePregunta];
+                
+                // Solo requerir verificación si la pregunta tiene opciones con respuesta correcta
+                if (pregunta.opciones && pregunta.opciones.length > 0) {
+                    const tieneRespuestaCorrecta = pregunta.opciones.some(op => op.esCorrecta);
+                    
+                    if (tieneRespuestaCorrecta && !app.respuestasUsuario[indicePregunta]?.respondida) {
+                        alert('Por favor, verifica tu respuesta antes de continuar');
+                        return;
+                    }
+                    
+                    // Si no tiene respuesta correcta (pregunta abierta/crítica), marcarla como respondida automáticamente
+                    if (!tieneRespuestaCorrecta && !app.respuestasUsuario[indicePregunta]) {
+                        app.respuestasUsuario[indicePregunta] = { respondida: true, correcta: true };
+                    }
                 }
             }
             
