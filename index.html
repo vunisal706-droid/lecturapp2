@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Lecturas - Primaria Andalucía</title>
+    <title>LecturApp - Lecturas Interactivas</title>
     <style>
         * {
             margin: 0;
@@ -81,11 +81,16 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            width: 100%;
         }
 
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-primary {
@@ -101,12 +106,6 @@
         .btn-warning {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         .btn-danger {
@@ -120,21 +119,19 @@
             color: #667eea;
         }
 
-        .btn-chatgpt {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            font-size: 1.3em;
-            padding: 20px 40px;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-save-big {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        .btn-upload {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
             color: white;
             font-size: 1.4em;
-            padding: 20px 40px;
-            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
-            border: 3px solid #fff;
+            padding: 25px 40px;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-interactive {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            font-size: 1.2em;
+            padding: 20px 30px;
         }
 
         .grid-2 {
@@ -210,6 +207,12 @@
             color: #1e40af;
         }
 
+        .alert-success {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            color: #065f46;
+        }
+
         .alert-warning {
             background: #fef3c7;
             border: 2px solid #f59e0b;
@@ -236,286 +239,322 @@
 
         .modal-content {
             background: white;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 600px;
-            margin: 20px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            animation: slideIn 0.3s;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .pregunta-card {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             padding: 30px;
-            border-radius: 15px;
-            margin: 20px 0;
+            border-radius: 20px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
 
-        .pregunta-texto {
-            font-size: 1.5em;
-            font-weight: 600;
-            color: #92400e;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
         }
 
-        .opcion {
-            background: white;
-            padding: 15px 20px;
-            border: 3px solid #e5e7eb;
-            border-radius: 12px;
-            margin: 10px 0;
+        .modal-title {
+            font-size: 1.8em;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2em;
+            color: #9ca3af;
             cursor: pointer;
             transition: all 0.3s;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
             font-size: 1.1em;
-        }
-
-        .opcion:hover {
-            border-color: #667eea;
-            transform: translateX(5px);
-        }
-
-        .opcion.selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-        }
-
-        .resultado-correcto {
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            border: 3px solid #10b981;
-        }
-
-        .resultado-incorrecto {
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-            border: 3px solid #ef4444;
-        }
-
-        .puntuacion {
-            text-align: center;
-            padding: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            margin: 20px 0;
-        }
-
-        .puntuacion-numero {
-            font-size: 4em;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-
-        .lectura-guardada {
-            background: white;
-            border: 3px solid #e5e7eb;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 15px 0;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
             transition: all 0.3s;
         }
 
-        .lectura-guardada:hover {
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 40px;
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .file-input-label:hover {
+            background: #f3f4f6;
+            border-color: #764ba2;
+            transform: scale(1.02);
+        }
+
+        .lecturas-guardadas {
+            margin-top: 30px;
+        }
+
+        .lectura-item {
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            margin: 15px 0;
+            background: #f9fafb;
+            transition: all 0.3s;
+        }
+
+        .lectura-item:hover {
             border-color: #667eea;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .texto-lectura {
-            background: #f9fafb;
-            padding: 30px;
-            border-radius: 15px;
+        .lectura-item-title {
             font-size: 1.3em;
-            line-height: 1.8;
+            font-weight: 700;
             color: #374151;
+            margin-bottom: 10px;
+        }
+
+        .lectura-item-info {
+            color: #6b7280;
+            font-size: 0.95em;
+            margin: 5px 0;
+        }
+
+        .lectura-item-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        /* Estilos para el modo interactivo */
+        .progreso {
+            background: #e5e7eb;
+            height: 10px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progreso-barra {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s;
+        }
+
+        .seccion-interactiva {
+            min-height: 400px;
+        }
+
+        .vocabulario-item {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 8px;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .texto-lectura {
+            font-size: 1.2em;
+            line-height: 2;
+            text-align: justify;
+            padding: 30px;
+            background: #f9fafb;
+            border-radius: 15px;
             border-left: 5px solid #667eea;
         }
 
-        .actividad-box {
-            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-            padding: 25px;
+        .pregunta-interactiva {
+            background: white;
+            padding: 30px;
             border-radius: 15px;
-            margin: 15px 0;
-            border-left: 5px solid #667eea;
+            border: 3px solid #e5e7eb;
+            margin: 20px 0;
+        }
+
+        .pregunta-titulo {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .pregunta-enunciado {
             font-size: 1.2em;
+            margin-bottom: 25px;
+            color: #374151;
             line-height: 1.6;
+        }
+
+        .opcion-respuesta {
+            padding: 20px;
+            margin: 12px 0;
+            background: #f9fafb;
+            border: 3px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+
+        .opcion-respuesta:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+            transform: translateX(5px);
+        }
+
+        .opcion-respuesta.seleccionada {
+            border-color: #667eea;
+            background: #dbeafe;
+        }
+
+        .opcion-respuesta.correcta {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .opcion-respuesta.incorrecta {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .opcion-respuesta.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .resultado-final {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .puntuacion {
+            font-size: 4em;
+            color: #667eea;
+            font-weight: 700;
+            margin: 20px 0;
         }
 
         .badge {
             display: inline-block;
-            padding: 5px 15px;
+            padding: 6px 15px;
             border-radius: 20px;
             font-size: 0.9em;
             font-weight: 600;
+            margin: 5px;
         }
 
-        .badge-primary {
-            background: #667eea;
-            color: white;
+        .badge-tipo {
+            background: #dbeafe;
+            color: #1e40af;
         }
 
-        .flex {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .flex-1 {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .prompt-box {
-            background: #1f2937;
-            color: #10b981;
+        .actividad-post {
             padding: 20px;
-            border-radius: 12px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.95em;
-            max-height: 400px;
-            overflow-y: auto;
-            margin: 20px 0;
-        }
-
-        .copy-indicator {
-            background: #10b981;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 2000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: slideInRight 0.3s;
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .btn {
-                padding: 12px 20px;
-                font-size: 1em;
-            }
-            
-            .grid-2, .grid-3 {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .footer {
-            text-align: center;
-            color: white;
-            padding: 20px;
-            margin-top: 40px;
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .footer .heart {
-            color: #ff6b6b;
-            animation: heartbeat 1.5s infinite;
-            display: inline-block;
-        }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            25% { transform: scale(1.1); }
-            50% { transform: scale(1); }
-        }
-
-        .checkbox-list {
-            max-height: 400px;
-            overflow-y: auto;
-            margin: 20px 0;
-        }
-
-        .checkbox-item {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px 0;
-            display: flex;
-            align-items: start;
-            gap: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .checkbox-item:hover {
-            border-color: #667eea;
+            margin: 15px 0;
             background: #f9fafb;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
         }
 
-        .checkbox-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            margin-top: 3px;
-        }
-
-        .checkbox-item label {
-            flex: 1;
-            cursor: pointer;
-        }
-
+        /* Estilos de impresión */
         @media print {
-            body {
-                background: white;
-                padding: 0;
-                margin: 0;
+            body * {
+                visibility: hidden;
             }
-
-            .container, .card, .header, .footer, .btn, .modal {
-                display: none !important;
+            
+            #pagina-impresion, #pagina-impresion * {
+                visibility: visible;
             }
-
+            
             #pagina-impresion {
-                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
             }
-        }
-
-        #pagina-impresion {
-            display: none;
-            background: white;
-            color: black;
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            padding: 40px;
-            max-width: 210mm;
-            margin: 0 auto;
         }
 
         .print-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             padding-bottom: 20px;
             border-bottom: 3px solid #667eea;
         }
@@ -523,44 +562,65 @@
         .print-header h1 {
             color: #667eea;
             font-size: 2.5em;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
-        .print-header .school {
-            font-size: 1.2em;
-            color: #6b7280;
+        .school {
+            color: #374151;
+            font-size: 1.3em;
             font-weight: 600;
         }
 
         .print-section {
-            margin: 40px 0;
-            page-break-inside: avoid;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 15px;
+            border: 2px solid #e5e7eb;
         }
 
         .print-section-title {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            font-size: 1.5em;
-            font-weight: bold;
+            font-size: 1.8em;
+            color: #667eea;
+            font-weight: 700;
             margin-bottom: 20px;
-        }
-
-        .print-content {
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 5px solid #667eea;
-            margin: 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
         }
 
         .print-vocab-item {
-            background: white;
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .print-content {
             padding: 15px;
+            background: white;
+            border-radius: 10px;
             margin: 10px 0;
-            border-radius: 8px;
-            border: 2px solid #fde68a;
+            line-height: 1.8;
+        }
+
+        .print-titulo-lectura {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: 700;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .print-texto-lectura {
+            font-size: 1.2em;
+            line-height: 2;
+            text-align: justify;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
         }
 
         .print-pregunta {
@@ -568,12 +628,11 @@
             padding: 20px;
             margin: 20px 0;
             border-radius: 10px;
-            border: 2px solid #e5e7eb;
-            page-break-inside: avoid;
+            border-left: 4px solid #667eea;
         }
 
         .print-pregunta-numero {
-            font-weight: bold;
+            font-weight: 700;
             color: #667eea;
             font-size: 1.2em;
             margin-bottom: 10px;
@@ -581,34 +640,37 @@
 
         .print-pregunta-texto {
             font-size: 1.1em;
-            margin: 15px 0;
-            font-weight: 600;
+            margin-bottom: 15px;
+            color: #374151;
         }
 
-        .print-respuesta-espacio {
-            min-height: 80px;
-            border: 2px dashed #d1d5db;
+        .print-opcion {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
             border-radius: 8px;
-            margin-top: 15px;
-            background: #fafafa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .print-texto-lectura {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
+        .print-opcion-checkbox {
+            width: 20px;
+            height: 20px;
             border: 2px solid #667eea;
-            font-size: 1.1em;
-            line-height: 1.8;
-            text-align: justify;
+            border-radius: 4px;
+            flex-shrink: 0;
         }
 
-        .print-titulo-lectura {
-            text-align: center;
-            font-size: 2em;
-            color: #667eea;
-            margin: 20px 0;
-            font-weight: bold;
+        @media print {
+            .print-section {
+                break-inside: avoid;
+            }
+            
+            .print-pregunta {
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
@@ -616,1058 +678,610 @@
     <div class="container">
         <div class="header">
             <div class="header-icon">📚</div>
-            <h1>Generador de Lecturas</h1>
-            <p style="font-size: 1.1em;">Educación Primaria</p>
-            <p style="font-size: 1em; margin-top: 5px; opacity: 0.9;">CEIP Capitulaciones Santa Fe</p>
+            <h1>LecturApp</h1>
+            <p>Lecturas Interactivas - Andalucía</p>
         </div>
 
-        <!-- Pantalla Principal -->
-        <div id="pantalla-config" class="card">
-            <h2 class="card-title">🎯 Selecciona el tipo de generación</h2>
-            <div class="grid-2">
-                <button class="btn btn-primary" onclick="seleccionarModo('libre')" style="padding: 30px; font-size: 1.2em;">
-                    <span style="font-size: 2em;">📝</span>
-                    <div>
-                        <div>Tipo Libre</div>
-                        <small style="font-size: 0.8em; opacity: 0.9;">Genera una lectura según el curso seleccionado</small>
+        <!-- PANTALLA PRINCIPAL -->
+        <div class="card" id="pantalla-principal">
+            <div class="card-title">📖 Selecciona el curso</div>
+            
+            <div class="grid-3">
+                <button class="curso-btn" onclick="seleccionarCurso('1primaria')">1º Primaria</button>
+                <button class="curso-btn" onclick="seleccionarCurso('2primaria')">2º Primaria</button>
+                <button class="curso-btn" onclick="seleccionarCurso('3primaria')">3º Primaria</button>
+                <button class="curso-btn" onclick="seleccionarCurso('4primaria')">4º Primaria</button>
+                <button class="curso-btn" onclick="seleccionarCurso('5primaria')">5º Primaria</button>
+                <button class="curso-btn" onclick="seleccionarCurso('6primaria')">6º Primaria</button>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button class="btn btn-upload" onclick="mostrarModalCargarLectura()">
+                    📖 Cargar lectura
+                </button>
+            </div>
+
+            <!-- Lecturas guardadas -->
+            <div class="lecturas-guardadas" id="lecturas-guardadas-lista"></div>
+        </div>
+
+        <!-- PANTALLA INTERACTIVA -->
+        <div class="card hidden" id="pantalla-interactiva">
+            <div class="progreso">
+                <div class="progreso-barra" id="barra-progreso" style="width: 0%"></div>
+            </div>
+
+            <div id="contenido-interactivo" class="seccion-interactiva"></div>
+
+            <div class="grid-2" style="margin-top: 30px;">
+                <button class="btn btn-outline" onclick="volverAlMenu()" id="btn-volver">
+                    ← Volver al menú
+                </button>
+                <button class="btn btn-primary" onclick="siguientePaso()" id="btn-siguiente">
+                    Siguiente →
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal: Cargar Lectura -->
+        <div class="modal" id="modal-cargar-lectura">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">📖 Cargar lectura</h2>
+                    <button class="close-btn" onclick="cerrarModalCargarLectura()">×</button>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="cambiarTab('archivo')">📁 Subir archivo</button>
+                    <button class="tab" onclick="cambiarTab('texto')">📝 Pegar JSON</button>
+                </div>
+
+                <div class="tab-content active" id="tab-archivo">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="file-input" accept=".json" onchange="cargarArchivoJSON(event)">
+                        <label for="file-input" class="file-input-label">
+                            <div style="font-size: 3em;">📁</div>
+                            <div>Seleccionar archivo JSON</div>
+                            <div style="font-size: 0.8em; font-weight: normal; color: #6b7280;">
+                                Desde ordenador, móvil o tablet
+                            </div>
+                        </label>
                     </div>
-                </button>
-                <button class="btn btn-success" onclick="seleccionarModo('plan')" style="padding: 30px; font-size: 1.2em;">
-                    <span style="font-size: 2em;">📚</span>
-                    <div>
-                        <div>Plan de Lectura</div>
-                        <small style="font-size: 0.8em; opacity: 0.9;">Según el Plan de Lectura de Andalucía</small>
+                </div>
+
+                <div class="tab-content" id="tab-texto">
+                    <div class="input-group">
+                        <label>Pega aquí tu JSON:</label>
+                        <textarea id="json-text-input" placeholder='{"titulo": "...", "texto": "...", ...}' style="height: 300px; font-family: monospace; font-size: 0.9em;"></textarea>
                     </div>
-                </button>
-            </div>
-            <button class="btn btn-outline" onclick="mostrarGuardadas()" style="width: 100%; margin-top: 20px; padding: 20px; font-size: 1.2em;">
-                📖 Ver Lecturas Guardadas (<span id="contador-guardadas">0</span>)
-            </button>
-        </div>
-
-        <!-- Configuración de Lectura -->
-        <div id="pantalla-configuracion" class="card hidden">
-            <h2 class="card-title"><span id="modo-titulo"></span></h2>
-            
-            <div class="input-group">
-                <label>Selecciona el curso:</label>
-                <div class="grid-3" id="cursos-container"></div>
-            </div>
-
-            <div id="trimestre-container" class="input-group hidden">
-                <label>Selecciona el trimestre:</label>
-                <div class="grid-3">
-                    <button class="curso-btn" onclick="seleccionarTrimestre('1')">1.º Trimestre</button>
-                    <button class="curso-btn" onclick="seleccionarTrimestre('2')">2.º Trimestre</button>
-                    <button class="curso-btn" onclick="seleccionarTrimestre('3')">3.º Trimestre</button>
-                </div>
-            </div>
-
-            <div id="opciones-adicionales" class="hidden">
-                <hr style="margin: 30px 0; border: none; border-top: 2px dashed #e5e7eb;">
-                <h3 style="color: #667eea; margin-bottom: 20px;">✨ Opciones adicionales (opcional)</h3>
-                
-                <div class="input-group">
-                    <label>🎯 Tema específico:</label>
-                    <input type="text" id="tema" placeholder="Ej: Los dinosaurios, El sistema solar, La amistad...">
+                    <button class="btn btn-primary" onclick="procesarJSONTexto()">✅ Cargar desde texto</button>
                 </div>
 
-                <div class="input-group">
-                    <label>❤️ Valor a trabajar:</label>
-                    <input type="text" id="valor" placeholder="Ej: Respeto, Solidaridad, Responsabilidad...">
+                <div id="resultado-carga" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- Modal: Elegir modo -->
+        <div class="modal" id="modal-elegir-modo">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">🎯 ¿Cómo quieres usar la lectura?</h2>
                 </div>
 
-                <div class="input-group">
-                    <label>📚 Vocabulario específico a trabajar:</label>
-                    <input type="text" id="vocabulario" placeholder="Ej: herbívoro, carnívoro, omnívoro">
-                    <small style="color: #6b7280; display: block; margin-top: 5px;">Separa las palabras por comas</small>
+                <div class="grid-2" style="margin-top: 20px;">
+                    <button class="btn btn-interactive" onclick="iniciarModoInteractivo()">
+                        🖥️ Trabajar interactivamente
+                    </button>
+                    <button class="btn btn-warning" onclick="irDirectoAImprimir()">
+                        🖨️ Imprimir directamente
+                    </button>
+                </div>
+
+                <div class="alert alert-info" style="margin-top: 20px;">
+                    <strong>💡 Modo interactivo:</strong> Trabaja la lectura paso a paso con actividades previas, lectura, preguntas con feedback y actividades posteriores.<br><br>
+                    <strong>🖨️ Imprimir:</strong> Genera directamente el PDF para trabajar en papel.
                 </div>
             </div>
-
-            <div class="flex" style="margin-top: 30px;">
-                <button class="btn btn-outline flex-1" onclick="volverInicio()">Cancelar</button>
-                <button class="btn btn-primary flex-1" onclick="generarPrompt()">Generar Prompt</button>
-            </div>
         </div>
 
-        <!-- Pantalla de Prompt con instrucciones -->
-        <div id="pantalla-prompt" class="card hidden">
-            <h2 class="card-title">🚀 Prompt generado para ChatGPT</h2>
-            
-            <div class="alert alert-warning">
-                <strong>📋 Instrucciones:</strong>
-                <ol style="margin: 10px 0 0 20px;">
-                    <li>Haz clic en el botón verde "Ir a ChatGPT"</li>
-                    <li>El prompt se copiará automáticamente</li>
-                    <li>En ChatGPT, pega el prompt (Ctrl+V) y envíalo</li>
-                    <li>Copia toda la respuesta JSON que ChatGPT te devuelva</li>
-                    <li>Vuelve aquí y pégala en el siguiente paso</li>
-                </ol>
-            </div>
+        <!-- Modal: Seleccionar preguntas para imprimir -->
+        <div class="modal" id="modal-seleccionar-preguntas">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">❓ Selecciona las preguntas a imprimir</h2>
+                    <button class="close-btn" onclick="cerrarModalPreguntas()">×</button>
+                </div>
 
-            <div class="prompt-box" id="prompt-display"></div>
+                <div style="margin: 20px 0;">
+                    <button class="btn btn-primary btn-small" onclick="seleccionarTodasPreguntas(true)">✓ Seleccionar todas</button>
+                    <button class="btn btn-outline btn-small" onclick="seleccionarTodasPreguntas(false)">✗ Deseleccionar todas</button>
+                </div>
 
-            <div class="flex" style="margin-top: 30px;">
-                <button class="btn btn-outline flex-1" onclick="volverInicio()">← Volver al inicio</button>
-                <button class="btn btn-chatgpt flex-1" onclick="irAChatGPT()">
-                    🤖 Ir a ChatGPT (Copia automática)
-                </button>
-            </div>
-        </div>
+                <div id="lista-preguntas-imprimir"></div>
 
-        <!-- Pantalla para pegar respuesta de ChatGPT -->
-        <div id="pantalla-input" class="card hidden">
-            <h2 class="card-title">📥 Pega la respuesta de ChatGPT</h2>
-            
-            <div class="alert alert-info">
-                <strong>💡 Cómo pegar la respuesta:</strong>
-                <ul style="margin: 10px 0 0 20px;">
-                    <li>Copia TODO el JSON que ChatGPT te devolvió</li>
-                    <li>Debe empezar con <code>&#123;</code> y terminar con <code>&#125;</code></li>
-                    <li>No copies texto adicional, solo el JSON</li>
-                </ul>
-            </div>
-
-            <div class="input-group">
-                <textarea id="json-input" rows="15" placeholder='Pega aquí el JSON completo de ChatGPT:
-
-{
-  "titulo": "...",
-  "texto": "...",
-  "vocabulario": [...],
-  ...
-}'></textarea>
-            </div>
-
-            <div style="text-align: center; margin: 30px 0;">
-                <button class="btn btn-save-big" onclick="mostrarModalGuardarDesdeInput()">
-                    💾 ¡Guardar esta lectura ahora!
-                </button>
-            </div>
-
-            <div style="text-align: center; margin: 20px 0;">
-                <button class="btn btn-primary" onclick="prepararImpresion()" style="padding: 20px 40px; font-size: 1.3em;">
-                    🖨️ Imprimir Lectura para Clase
-                </button>
-                <p style="color: #6b7280; margin-top: 10px; font-size: 0.95em;">
-                    Genera un PDF bonito con la lectura y actividades para tus alumnos
-                </p>
-            </div>
-
-            <div class="flex">
-                <button class="btn btn-outline flex-1" onclick="volverPrompt()">← Volver</button>
-                <button class="btn btn-primary flex-1" onclick="procesarJSON()">✨ Generar Lectura Interactiva</button>
-            </div>
-        </div>
-
-        <!-- Actividades Previas -->
-        <div id="pantalla-actividades" class="card hidden">
-            <h2 class="card-title">🎯 Antes de leer: <span id="titulo-lectura"></span></h2>
-            
-            <div id="vocabulario-container"></div>
-            <div id="contexto-container"></div>
-            <div id="predicciones-container"></div>
-
-            <button class="btn btn-primary" onclick="irALectura()" style="width: 100%; padding: 20px; font-size: 1.3em; margin-top: 30px;">
-                ¡Comenzar a leer! 📖
-            </button>
-        </div>
-
-        <!-- Lectura -->
-        <div id="pantalla-lectura" class="card hidden">
-            <h2 class="card-title" style="text-align: center; font-size: 2em;">
-                📖 <span id="titulo-lectura-2"></span>
-            </h2>
-            
-            <div class="texto-lectura" id="texto-lectura"></div>
-
-            <button class="btn btn-primary" onclick="irAPreguntas()" style="width: 100%; padding: 20px; font-size: 1.3em; margin-top: 30px;">
-                Responder preguntas →
-            </button>
-        </div>
-
-        <!-- Preguntas -->
-        <div id="pantalla-preguntas" class="card hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 class="card-title" id="pregunta-numero"></h2>
-                <span class="badge badge-primary" id="tipo-pregunta"></span>
-            </div>
-            
-            <div class="pregunta-card">
-                <div class="pregunta-texto" id="pregunta-texto"></div>
-                <div id="opciones-container"></div>
-            </div>
-
-            <button class="btn btn-primary" onclick="siguientePregunta()" id="btn-siguiente" style="width: 100%; padding: 20px; font-size: 1.3em; margin-top: 20px;" disabled>
-                Siguiente pregunta →
-            </button>
-        </div>
-
-        <!-- Resultados -->
-        <div id="pantalla-resultados" class="card hidden">
-            <h2 class="card-title" style="text-align: center; font-size: 2em;">🎉 ¡Actividad completada!</h2>
-            
-            <div class="puntuacion">
-                <div style="font-size: 1.5em;">Puntuación</div>
-                <div class="puntuacion-numero"><span id="puntuacion-correctas">0</span> / <span id="puntuacion-total">0</span></div>
-                <div style="font-size: 1.8em;"><span id="puntuacion-porcentaje">0</span>% de respuestas correctas</div>
-            </div>
-
-            <div id="resultados-detalle"></div>
-
-            <div class="flex" style="margin-top: 30px;">
-                <button class="btn btn-warning flex-1" onclick="mostrarModalGuardar()" style="padding: 20px; font-size: 1.2em;">
-                    💾 Guardar lectura
-                </button>
-                <button class="btn btn-success flex-1" onclick="irAActividadesPosteriores()" style="padding: 20px; font-size: 1.2em;">
-                    Actividades después de leer →
-                </button>
-            </div>
-
-            <button class="btn btn-outline" onclick="volverInicio()" style="width: 100%; margin-top: 15px;">
-                🔄 Nueva lectura
-            </button>
-        </div>
-
-        <!-- Actividades Posteriores -->
-        <div id="pantalla-actividades-posteriores" class="card hidden">
-            <h2 class="card-title" style="text-align: center; font-size: 2em;">🎯 Actividades después de la lectura</h2>
-            
-            <div class="alert alert-info">
-                💡 <strong>Para el maestro:</strong> Estas son actividades orales para realizar en grupo después de la lectura.
-            </div>
-
-            <div id="actividades-posteriores-container"></div>
-
-            <div class="flex" style="margin-top: 30px;">
-                <button class="btn btn-outline flex-1" onclick="volverResultados()">← Ver resultados</button>
-                <button class="btn btn-primary flex-1" onclick="volverInicio()">🔄 Nueva lectura</button>
-            </div>
-        </div>
-
-        <!-- Lecturas Guardadas -->
-        <div id="pantalla-guardadas" class="card hidden">
-            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
-                <h2 class="card-title" style="flex: 1;">📚 Lecturas Guardadas</h2>
-                <button class="btn btn-outline" onclick="cerrarGuardadas()">← Volver</button>
-            </div>
-            
-            <div id="lecturas-guardadas-container"></div>
-        </div>
-
-        <div class="footer">
-            Made with <span class="heart">❤️</span> by Víctor
-        </div>
-    </div>
-
-    <!-- Modal para seleccionar preguntas a imprimir -->
-    <div id="modal-seleccionar-preguntas" class="modal">
-        <div class="modal-content" style="max-width: 800px;">
-            <h2 style="color: #667eea; margin-bottom: 20px;">🖨️ Selecciona las preguntas a imprimir</h2>
-            
-            <div class="alert alert-info">
-                💡 <strong>Personaliza tu hoja de trabajo:</strong> Marca las preguntas que quieres incluir en la impresión.
-            </div>
-
-            <div style="margin: 20px 0;">
-                <button class="btn btn-outline" onclick="seleccionarTodasPreguntas(true)" style="margin-right: 10px;">
-                    ✅ Seleccionar todas
-                </button>
-                <button class="btn btn-outline" onclick="seleccionarTodasPreguntas(false)">
-                    ❌ Deseleccionar todas
-                </button>
-            </div>
-
-            <div class="checkbox-list" id="lista-preguntas-imprimir"></div>
-
-            <div class="flex" style="margin-top: 30px;">
-                <button class="btn btn-outline flex-1" onclick="cerrarModalPreguntas()">Cancelar</button>
-                <button class="btn btn-success flex-1" onclick="imprimirLectura()">🖨️ Imprimir ahora</button>
+                <div class="grid-2" style="margin-top: 30px;">
+                    <button class="btn btn-outline" onclick="cerrarModalPreguntas()">Cancelar</button>
+                    <button class="btn btn-success" onclick="imprimirLectura()">🖨️ Imprimir seleccionadas</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Página de impresión (oculta, solo visible al imprimir) -->
-    <div id="pagina-impresion">
-        <!-- El contenido se genera dinámicamente -->
-    </div>
-
-    <!-- Modal para guardar lectura -->
-    <div id="modal-guardar" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #667eea; margin-bottom: 20px;">💾 Guardar lectura</h2>
-            <div class="input-group">
-                <label>Nombre de la lectura:</label>
-                <input type="text" id="nombre-lectura" placeholder="Ej: Los dinosaurios - 3º Primaria">
-            </div>
-            <div class="flex" style="margin-top: 30px;">
-                <button class="btn btn-outline flex-1" onclick="cerrarModalGuardar()">Cancelar</button>
-                <button class="btn btn-primary flex-1" onclick="guardarLectura()">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de instrucciones ChatGPT -->
-    <div id="modal-instrucciones" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #10b981; margin-bottom: 20px;">🤖 ¡Prompt copiado!</h2>
-            <div class="alert alert-info" style="margin: 20px 0;">
-                <strong>Pasos a seguir:</strong>
-                <ol style="margin: 15px 0 0 20px; line-height: 1.8;">
-                    <li><strong>ChatGPT se abrirá en una nueva pestaña</strong></li>
-                    <li><strong>Pega el prompt</strong> (Ctrl+V o Cmd+V)</li>
-                    <li><strong>Envía el mensaje</strong> a ChatGPT</li>
-                    <li><strong>Copia TODO el JSON</strong> que te devuelva</li>
-                    <li><strong>Vuelve aquí</strong> y pégalo en el siguiente paso</li>
-                </ol>
-            </div>
-            <button class="btn btn-success" onclick="cerrarModalInstrucciones()" style="width: 100%; padding: 15px; font-size: 1.2em;">
-                ¡Entendido! Vamos allá 🚀
-            </button>
-        </div>
-    </div>
+    <!-- Página de impresión -->
+    <div id="pagina-impresion" style="display: none;"></div>
 
     <script>
-        // Estado de la aplicación
-        const app = {
-            modo: null,
-            curso: null,
-            trimestre: null,
-            tema: '',
-            valor: '',
-            vocabulario: '',
-            prompt: '',
-            lecturaData: null,
-            currentQuestion: 0,
-            respuestas: {}
-        };
-
         const cursosInfo = {
-            '1': { nombre: '1.º de Primaria', emoji: '📘' },
-            '2': { nombre: '2.º de Primaria', emoji: '📗' },
-            '3': { nombre: '3.º de Primaria', emoji: '📙' },
-            '4': { nombre: '4.º de Primaria', emoji: '📒' },
-            '5': { nombre: '5.º de Primaria', emoji: '📕' },
-            '6': { nombre: '6.º de Primaria', emoji: '📔' }
-        };
-
-        const planLecturaInfo = {
-            '1': {
-                '1': { tipos: 'cuentos breves, textos rimados, adivinanzas, carteles del aula', longitud: '60-100', preguntas: '4-6 (4 literales, 1 inferencial, 1 valorativa)' },
-                '2': { tipos: 'textos narrativos breves con estructura sencilla (inicio-nudo-desenlace), recetas simples', longitud: '60-100', preguntas: '4-6 (4 literales, 1 inferencial, 1 valorativa)' },
-                '3': { tipos: 'descripciones de personas, animales o lugares, cómics sencillos', longitud: '60-100', preguntas: '4-6 (4 literales, 1 inferencial, 1 valorativa)' }
-            },
-            '2': {
-                '1': { tipos: 'cuentos tradicionales y fábulas cortas', longitud: '100-150', preguntas: '6-8 (4 literales, 2 inferenciales, 1 valorativa)' },
-                '2': { tipos: 'textos instructivos (recetas, normas de juego)', longitud: '100-150', preguntas: '6-8 (4 literales, 2 inferenciales, 1 valorativa)' },
-                '3': { tipos: 'textos informativos sencillos (animales, oficios)', longitud: '100-150', preguntas: '6-8 (4 literales, 2 inferenciales, 1 valorativa)' }
-            },
-            '3': {
-                '1': { tipos: 'narrativos con más de un personaje y secuencias temporales', longitud: '150-200', preguntas: '8-10 (4 literales, 3 inferenciales, 2 críticas)' },
-                '2': { tipos: 'textos expositivos cortos sobre temas naturales o sociales', longitud: '150-200', preguntas: '8-10 (4 literales, 3 inferenciales, 2 críticas)' },
-                '3': { tipos: 'poemas, leyendas o fragmentos de novelas infantiles', longitud: '150-200', preguntas: '8-10 (4 literales, 3 inferenciales, 2 críticas)' }
-            },
-            '4': {
-                '1': { tipos: 'narraciones con estructura compleja (dos escenarios o tiempos)', longitud: '200-250', preguntas: '10-12 (4 literales, 4 inferenciales, 2-3 críticas)' },
-                '2': { tipos: 'textos expositivos (informes breves, divulgativos)', longitud: '200-250', preguntas: '10-12 (4 literales, 4 inferenciales, 2-3 críticas)' },
-                '3': { tipos: 'textos dialogados (teatro corto, entrevistas)', longitud: '200-250', preguntas: '10-12 (4 literales, 4 inferenciales, 2-3 críticas)' }
-            },
-            '5': {
-                '1': { tipos: 'relatos históricos o de aventuras', longitud: '250-300', preguntas: '12-14 (4 literales, 5 inferenciales, 3-4 críticas)' },
-                '2': { tipos: 'textos expositivos y argumentativos breves', longitud: '250-300', preguntas: '12-14 (4 literales, 5 inferenciales, 3-4 críticas)' },
-                '3': { tipos: 'textos periodísticos o de divulgación', longitud: '250-300', preguntas: '12-14 (4 literales, 5 inferenciales, 3-4 críticas)' }
-            },
-            '6': {
-                '1': { tipos: 'textos narrativos extensos o fragmentos de novelas juveniles', longitud: '300-400', preguntas: '14-15 (4 literales, 6 inferenciales, 4-6 críticas)' },
-                '2': { tipos: 'textos argumentativos (opinión, debate escolar)', longitud: '300-400', preguntas: '14-15 (4 literales, 6 inferenciales, 4-6 críticas)' },
-                '3': { tipos: 'textos expositivos de divulgación y artículos breves', longitud: '300-400', preguntas: '14-15 (4 literales, 6 inferenciales, 4-6 críticas)' }
-            }
+            '1primaria': { nombre: '1º de Primaria', nivel: 1 },
+            '2primaria': { nombre: '2º de Primaria', nivel: 2 },
+            '3primaria': { nombre: '3º de Primaria', nivel: 3 },
+            '4primaria': { nombre: '4º de Primaria', nivel: 4 },
+            '5primaria': { nombre: '5º de Primaria', nivel: 5 },
+            '6primaria': { nombre: '6º de Primaria', nivel: 6 }
         };
 
         const actividadesPosteriores = {
-            '1': [
-                '🧩 Reconstruyo la historia: los alumnos ordenan oralmente las partes del cuento (inicio, nudo, desenlace).',
-                '🎭 Dramatización: representar brevemente un fragmento con gestos o pequeños diálogos.',
-                '👂 ¿Quién dijo qué?: identificar oralmente qué personaje pronunció una frase.',
-                '💬 Mi parte favorita: cada alumno explica qué parte le gustó más y por qué.',
-                '🧠 Preguntas del texto: responder oralmente a preguntas sencillas sobre personajes, lugares o acciones.'
+            '1primaria': [
+                "En grupo, comentad qué parte de la historia os gustó más y por qué.",
+                "Dibujad vuestra escena favorita del cuento.",
+                "Por parejas, inventad un final diferente para la historia.",
+                "Pensad en un título alternativo que también podría tener este cuento.",
+                "¿Conocéis alguna historia parecida? Contadla a vuestros compañeros."
             ],
-            '2': [
-                '🗣️ Cuento el cuento con mis palabras: reconstrucción oral del texto.',
-                '🪄 Entrevista al personaje: un alumno hace de personaje y los demás le preguntan.',
-                '🎯 Verdadero o falso oral: responder y justificar brevemente.',
-                '💡 Cambiamos el final: proponer un desenlace diferente.',
-                '🎨 Palabras nuevas: comentar en grupo el significado de vocablos nuevos o curiosos.'
+            '2primaria': [
+                "Debatid en grupo: ¿os parece que los personajes actuaron bien?",
+                "Inventad entre todos una continuación de la historia.",
+                "Representad por grupos una escena de lo leído.",
+                "Pensad en situaciones de vuestra vida parecidas a las del texto.",
+                "¿Qué habríais hecho vosotros en lugar del protagonista?"
             ],
-            '3': [
-                '🔁 Resumen oral en grupo: reconstrucción colaborativa del contenido.',
-                '🎭 Rueda de personajes: cada alumno asume un personaje y responde como él.',
-                '🕵️ Detectives de pistas: explicar qué detalles del texto ayudaron a entender algo no dicho.',
-                '🎙️ Noticias del cuento: narrar el texto como si fuera una noticia.',
-                '💬 Opinión personal: expresar si les gustó el texto y qué mensaje transmite.'
+            '3primaria': [
+                "Comentad el mensaje o enseñanza que nos deja esta lectura.",
+                "¿Qué personaje os gusta más y por qué?",
+                "Escribid en grupo tres preguntas más sobre el texto.",
+                "Buscad en el diccionario palabras del texto que no conocíais.",
+                "Relacionad esta historia con algo que hayáis vivido o estudiado."
             ],
-            '4': [
-                '🎤 Rueda de preguntas: el alumnado formula preguntas entre sí sobre la lectura.',
-                '🎭 Entrevista colectiva: el grupo entrevista a un personaje o al autor imaginario.',
-                '💬 Debate guiado: opinar sobre las decisiones o comportamientos de los personajes.',
-                '🧠 Interpretación del título: explicar por qué se llama así el texto o proponer otro título.',
-                '📚 Recomendación lectora: contar por qué recomendarían esa lectura a otros compañeros.'
+            '4primaria': [
+                "Analizad en grupo los sentimientos de los personajes.",
+                "¿Estáis de acuerdo con las decisiones que tomaron? Argumentad.",
+                "Proponed un debate sobre el tema principal del texto.",
+                "Escribid un resumen en no más de cinco líneas.",
+                "Inventad preguntas que requieran reflexión sobre lo leído."
             ],
-            '5': [
-                '🎙️ Club de lectura oral: comentar los aspectos que más les hicieron pensar.',
-                '🗣️ Comparo textos: hablar sobre semejanzas o diferencias con otras lecturas.',
-                '⚖️ Tribunal de personajes: decidir colectivamente si un personaje actuó bien o mal y argumentarlo.',
-                '🎯 Resumen en tres ideas: sintetizar oralmente el texto en tres frases.',
-                '🧭 Conexión personal: relacionar el contenido con una experiencia propia.'
+            '5primaria': [
+                "Comparad esta lectura con otras que hayáis trabajado antes.",
+                "Analizad las causas y consecuencias de los hechos narrados.",
+                "Realizad una valoración crítica del comportamiento de los personajes.",
+                "Escribid una carta a uno de los personajes expresando vuestra opinión.",
+                "Proponed soluciones alternativas a los conflictos planteados."
             ],
-            '6': [
-                '🎤 Foro de opinión: expresar y debatir distintos puntos de vista sobre el tema del texto.',
-                '🧠 Interpretaciones alternativas: discutir diferentes significados o lecturas posibles.',
-                '📰 Rueda de prensa: un grupo actúa como periodistas y otro como personajes del texto.',
-                '🗳️ Voto argumentado: elegir y justificar oralmente el mejor personaje o el acto más justo.',
-                '📚 Reseña oral: explicar de forma breve el argumento y ofrecer una valoración personal.'
+            '6primaria': [
+                "Realizad un análisis profundo del tema y su relevancia actual.",
+                "Argumentad vuestra opinión sobre el mensaje del texto con ejemplos.",
+                "Investigad el contexto histórico o social relacionado con la lectura.",
+                "Escribid un texto argumentativo sobre el tema tratado.",
+                "Relacionad el contenido con noticias de actualidad o problemas sociales."
             ]
         };
 
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', () => {
-            actualizarContadorGuardadas();
-        });
+        const app = {
+            curso: null,
+            lecturaData: null,
+            lecturasGuardadas: [],
+            pasoActual: 0,
+            respuestasUsuario: [],
+            preguntaActual: 0
+        };
 
-        function actualizarContadorGuardadas() {
-            const guardadas = JSON.parse(localStorage.getItem('lecturasGuardadas') || '[]');
-            document.getElementById('contador-guardadas').textContent = guardadas.length;
-        }
-
-        function seleccionarModo(modo) {
-            app.modo = modo;
-            mostrarPantalla('pantalla-configuracion');
-            
-            const titulo = modo === 'libre' ? '📝 Tipo Libre' : '📚 Plan de Lectura';
-            document.getElementById('modo-titulo').textContent = titulo;
-            
-            // Generar botones de cursos
-            const cursosContainer = document.getElementById('cursos-container');
-            cursosContainer.innerHTML = '';
-            Object.entries(cursosInfo).forEach(([key, info]) => {
-                const btn = document.createElement('button');
-                btn.className = 'curso-btn';
-                btn.innerHTML = `<div style="font-size: 2em;">${info.emoji}</div><div>${info.nombre}</div>`;
-                btn.onclick = () => seleccionarCurso(key);
-                cursosContainer.appendChild(btn);
-            });
-            
-            if (modo === 'plan') {
-                document.getElementById('trimestre-container').classList.remove('hidden');
-            } else {
-                document.getElementById('trimestre-container').classList.add('hidden');
-            }
+        function init() {
+            cargarLecturasGuardadas();
+            mostrarLecturasGuardadas();
         }
 
         function seleccionarCurso(curso) {
             app.curso = curso;
-            // Actualizar selección visual
-            document.querySelectorAll('#cursos-container .curso-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            event.target.closest('.curso-btn').classList.add('selected');
-            
-            document.getElementById('opciones-adicionales').classList.remove('hidden');
-        }
-
-        function seleccionarTrimestre(trimestre) {
-            app.trimestre = trimestre;
-            document.querySelectorAll('#trimestre-container .curso-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+            document.querySelectorAll('.curso-btn').forEach(btn => btn.classList.remove('selected'));
             event.target.classList.add('selected');
+            mostrarLecturasGuardadas();
         }
 
-        function generarPrompt() {
-            if (!app.curso || (app.modo === 'plan' && !app.trimestre)) {
-                alert('Por favor, selecciona todos los campos obligatorios');
+        function cambiarTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            document.getElementById('resultado-carga').innerHTML = '';
+        }
+
+        function mostrarModalCargarLectura() {
+            if (!app.curso) {
+                alert('Por favor, selecciona primero un curso');
                 return;
             }
-
-            app.tema = document.getElementById('tema').value;
-            app.valor = document.getElementById('valor').value;
-            app.vocabulario = document.getElementById('vocabulario').value;
-
-            let promptText = '';
-            
-            if (app.modo === 'libre') {
-                const info = cursosInfo[app.curso];
-                promptText = `Genera una lectura de comprensión para ${info.nombre} de Educación Primaria en Andalucía.
-${app.tema ? `\nTEMA ESPECÍFICO: ${app.tema}` : ''}
-${app.valor ? `\nVALOR A TRABAJAR: ${app.valor}` : ''}
-${app.vocabulario ? `\nVOCABULARIO A INCLUIR: ${app.vocabulario}` : ''}
-
-IMPORTANTE: Devuelve ÚNICAMENTE un objeto JSON válido con esta estructura exacta (sin texto adicional antes o después):
-
-{
-  "titulo": "Título de la lectura",
-  "texto": "Texto completo de la lectura apropiado para el nivel",
-  "vocabulario": ["palabra1: definición", "palabra2: definición", "palabra3: definición"],
-  "predicciones": ["Pregunta de predicción 1", "Pregunta de predicción 2"],
-  "preguntas": [
-    {
-      "pregunta": "Texto de la pregunta",
-      "tipo": "literal",
-      "opciones": ["opción A", "opción B", "opción C", "opción D"],
-      "correcta": 0
-    }
-  ]
-}
-
-Especificaciones:
-- Longitud del texto: apropiada para ${info.nombre}
-- Incluir preguntas de comprensión (literales, inferenciales y críticas/valorativas)
-- Cada pregunta debe tener 4 opciones de respuesta
-- El campo "correcta" indica el índice de la opción correcta (0, 1, 2 o 3)
-- Incluir 2-3 palabras de vocabulario previo con sus definiciones
-- Incluir 2 preguntas de predicción sobre el texto${app.vocabulario ? `\n- IMPORTANTE: Incluir estas palabras de vocabulario en el texto y explicarlas: ${app.vocabulario}` : ''}${app.valor ? `\n- IMPORTANTE: El texto debe reflejar y trabajar el valor: ${app.valor}` : ''}`;
-            } else {
-                const info = cursosInfo[app.curso];
-                const planInfo = planLecturaInfo[app.curso][app.trimestre];
-                promptText = `Genera una lectura de comprensión siguiendo el Plan de Lectura de Andalucía.
-
-CURSO: ${info.nombre}
-TRIMESTRE: ${app.trimestre}.º trimestre
-${app.tema ? `\nTEMA ESPECÍFICO: ${app.tema}` : ''}
-${app.valor ? `\nVALOR A TRABAJAR: ${app.valor}` : ''}
-${app.vocabulario ? `\nVOCABULARIO A INCLUIR: ${app.vocabulario}` : ''}
-
-ESPECIFICACIONES DEL PLAN DE LECTURA:
-- Tipos de textos: ${planInfo.tipos}
-- Longitud: ${planInfo.longitud} palabras
-- Preguntas: ${planInfo.preguntas}
-
-IMPORTANTE: Devuelve ÚNICAMENTE un objeto JSON válido con esta estructura exacta (sin texto adicional antes o después):
-
-{
-  "titulo": "Título de la lectura",
-  "texto": "Texto completo de la lectura",
-  "vocabulario": ["palabra1: definición", "palabra2: definición", "palabra3: definición"],
-  "predicciones": ["Pregunta de predicción 1", "Pregunta de predicción 2"],
-  "contexto": "Texto de contextualización o pregunta motivadora (según el curso)",
-  "preguntas": [
-    {
-      "pregunta": "Texto de la pregunta",
-      "tipo": "literal",
-      "opciones": ["opción A", "opción B", "opción C", "opción D"],
-      "correcta": 0
-    }
-  ]
-}
-
-IMPORTANTE:
-- Cada pregunta debe tener exactamente 4 opciones
-- El campo "correcta" indica el índice (0-3) de la opción correcta
-- Distribuir las preguntas según el tipo especificado (literales, inferenciales, críticas)
-- El texto debe tener la longitud especificada${app.vocabulario ? `\n- IMPORTANTE: Incluir estas palabras de vocabulario en el texto y explicarlas: ${app.vocabulario}` : ''}${app.valor ? `\n- IMPORTANTE: El texto debe reflejar y trabajar el valor: ${app.valor}` : ''}`;
-            }
-
-            app.prompt = promptText;
-            document.getElementById('prompt-display').textContent = promptText;
-            mostrarPantalla('pantalla-prompt');
+            document.getElementById('modal-cargar-lectura').classList.add('active');
         }
 
-        function irAChatGPT() {
-            // Copiar automáticamente el prompt
-            navigator.clipboard.writeText(app.prompt).then(() => {
-                // Mostrar indicador de copiado
-                const indicator = document.createElement('div');
-                indicator.className = 'copy-indicator';
-                indicator.innerHTML = '✅ ¡Prompt copiado!';
-                document.body.appendChild(indicator);
-                
-                setTimeout(() => {
-                    indicator.remove();
-                }, 2000);
-
-                // Mostrar modal de instrucciones
-                document.getElementById('modal-instrucciones').classList.add('active');
-                
-                // Abrir ChatGPT
-                window.open('https://chat.openai.com', '_blank');
-                
-                // Ir a la siguiente pantalla
-                setTimeout(() => {
-                    mostrarPantalla('pantalla-input');
-                }, 1000);
-            });
+        function cerrarModalCargarLectura() {
+            document.getElementById('modal-cargar-lectura').classList.remove('active');
+            document.getElementById('file-input').value = '';
+            document.getElementById('json-text-input').value = '';
+            document.getElementById('resultado-carga').innerHTML = '';
         }
 
-        function cerrarModalInstrucciones() {
-            document.getElementById('modal-instrucciones').classList.remove('active');
-        }
-
-        function volverPrompt() {
-            mostrarPantalla('pantalla-prompt');
-        }
-
-        function procesarJSON() {
-            const jsonInput = document.getElementById('json-input').value;
-            
-            if (!jsonInput.trim()) {
-                alert('Por favor, pega el JSON de ChatGPT');
-                return;
-            }
-
-            try {
-                const data = JSON.parse(jsonInput);
-                
-                // Validar que tiene los campos mínimos necesarios
-                if (!data.titulo || !data.texto || !data.preguntas) {
-                    alert('El JSON no tiene todos los campos necesarios (titulo, texto, preguntas)');
-                    return;
+        function cargarArchivoJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const jsonData = JSON.parse(e.target.result);
+                    procesarJSON(jsonData);
+                } catch (error) {
+                    mostrarResultadoCarga('error', 'Error al leer el archivo: ' + error.message);
                 }
-                
-                // Añadir actividades posteriores aleatorias
-                const actividades = actividadesPosteriores[app.curso];
-                const mezcladas = [...actividades].sort(() => Math.random() - 0.5);
-                data.actividadesPosteriores = mezcladas.slice(0, 2);
-                
-                app.lecturaData = data;
-                app.respuestas = {};
-                app.currentQuestion = 0;
-                
-                console.log('Lectura cargada:', app.lecturaData);
-                mostrarActividadesPrevias();
-            } catch (e) {
-                console.error('Error al parsear JSON:', e);
-                alert('Error al procesar el JSON. Asegúrate de copiar correctamente la respuesta de ChatGPT.\n\nError: ' + e.message);
-            }
-        }
-
-        function mostrarActividadesPrevias() {
-            mostrarPantalla('pantalla-actividades');
-            
-            document.getElementById('titulo-lectura').textContent = app.lecturaData.titulo;
-            
-            // Limpiar contenedores primero
-            document.getElementById('vocabulario-container').innerHTML = '';
-            document.getElementById('contexto-container').innerHTML = '';
-            document.getElementById('predicciones-container').innerHTML = '';
-            
-            // Vocabulario
-            if (app.lecturaData.vocabulario && app.lecturaData.vocabulario.length > 0) {
-                const vocabHtml = `
-                    <div style="margin: 30px 0;">
-                        <h3 style="color: #667eea; font-size: 1.5em; margin-bottom: 15px;">📚 Vocabulario importante</h3>
-                        ${app.lecturaData.vocabulario.map(v => `
-                            <div class="actividad-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
-                                ${v}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                document.getElementById('vocabulario-container').innerHTML = vocabHtml;
-            }
-            
-            // Contexto
-            if (app.lecturaData.contexto) {
-                const contextoHtml = `
-                    <div style="margin: 30px 0;">
-                        <h3 style="color: #667eea; font-size: 1.5em; margin-bottom: 15px;">💭 Pensemos antes de leer</h3>
-                        <div class="actividad-box" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
-                            ${app.lecturaData.contexto}
-                        </div>
-                    </div>
-                `;
-                document.getElementById('contexto-container').innerHTML = contextoHtml;
-            }
-            
-            // Predicciones
-            if (app.lecturaData.predicciones && app.lecturaData.predicciones.length > 0) {
-                const prediccionesHtml = `
-                    <div style="margin: 30px 0;">
-                        <h3 style="color: #667eea; font-size: 1.5em; margin-bottom: 15px;">🔮 ¿Qué crees que pasará?</h3>
-                        ${app.lecturaData.predicciones.map(p => `
-                            <div class="actividad-box" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);">
-                                ${p}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                document.getElementById('predicciones-container').innerHTML = prediccionesHtml;
-            }
-        }
-
-        function irALectura() {
-            mostrarPantalla('pantalla-lectura');
-            document.getElementById('titulo-lectura-2').textContent = app.lecturaData.titulo;
-            document.getElementById('texto-lectura').textContent = app.lecturaData.texto;
-        }
-
-        function irAPreguntas() {
-            mostrarPantalla('pantalla-preguntas');
-            mostrarPreguntaActual();
-        }
-
-        function mostrarPreguntaActual() {
-            const pregunta = app.lecturaData.preguntas[app.currentQuestion];
-            const tipoEmojis = {
-                'literal': '📝',
-                'inferencial': '🤔',
-                'critica': '💭',
-                'valorativa': '⭐'
             };
-            
-            document.getElementById('pregunta-numero').textContent = 
-                `${tipoEmojis[pregunta.tipo] || '❓'} Pregunta ${app.currentQuestion + 1} de ${app.lecturaData.preguntas.length}`;
-            document.getElementById('tipo-pregunta').textContent = pregunta.tipo;
-            document.getElementById('pregunta-texto').textContent = pregunta.pregunta;
-            
-            const opcionesHtml = pregunta.opciones.map((opcion, idx) => `
-                <div class="opcion" onclick="seleccionarOpcion(${idx})">
-                    <strong>${String.fromCharCode(65 + idx)}.</strong> ${opcion}
-                </div>
-            `).join('');
-            
-            document.getElementById('opciones-container').innerHTML = opcionesHtml;
-            
-            const btnSiguiente = document.getElementById('btn-siguiente');
-            btnSiguiente.disabled = true;
-            
-            // Actualizar texto del botón según si es la última pregunta
-            if (app.currentQuestion < app.lecturaData.preguntas.length - 1) {
-                btnSiguiente.textContent = 'Siguiente pregunta →';
-            } else {
-                btnSiguiente.textContent = 'Ver resultados 🎯';
-            }
+            reader.readAsText(file);
         }
 
-        function seleccionarOpcion(idx) {
-            app.respuestas[app.currentQuestion] = idx;
-            
-            document.querySelectorAll('.opcion').forEach((el, i) => {
-                el.classList.toggle('selected', i === idx);
-            });
-            
-            document.getElementById('btn-siguiente').disabled = false;
-        }
-
-        function siguientePregunta() {
-            if (app.currentQuestion < app.lecturaData.preguntas.length - 1) {
-                app.currentQuestion++;
-                mostrarPreguntaActual();
-            } else {
-                mostrarResultados();
-            }
-        }
-
-        function mostrarResultados() {
-            mostrarPantalla('pantalla-resultados');
-            
-            let correctas = 0;
-            app.lecturaData.preguntas.forEach((pregunta, idx) => {
-                if (app.respuestas[idx] === pregunta.correcta) {
-                    correctas++;
-                }
-            });
-            
-            const total = app.lecturaData.preguntas.length;
-            const porcentaje = Math.round((correctas / total) * 100);
-            
-            document.getElementById('puntuacion-correctas').textContent = correctas;
-            document.getElementById('puntuacion-total').textContent = total;
-            document.getElementById('puntuacion-porcentaje').textContent = porcentaje;
-            
-            const detalleHtml = app.lecturaData.preguntas.map((pregunta, idx) => {
-                const esCorrecta = app.respuestas[idx] === pregunta.correcta;
-                return `
-                    <div class="opcion ${esCorrecta ? 'resultado-correcto' : 'resultado-incorrecto'}" style="margin: 15px 0; padding: 20px;">
-                        <div style="display: flex; align-items: start; gap: 15px;">
-                            <div style="font-size: 2em;">${esCorrecta ? '✅' : '❌'}</div>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; margin-bottom: 10px;">${pregunta.pregunta}</div>
-                                <div><strong>Tu respuesta:</strong> ${pregunta.opciones[app.respuestas[idx]]}</div>
-                                ${!esCorrecta ? `<div style="color: #059669; margin-top: 5px;"><strong>Correcta:</strong> ${pregunta.opciones[pregunta.correcta]}</div>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            document.getElementById('resultados-detalle').innerHTML = detalleHtml;
-        }
-
-        function irAActividadesPosteriores() {
-            mostrarPantalla('pantalla-actividades-posteriores');
-            
-            const actividadesHtml = app.lecturaData.actividadesPosteriores.map(actividad => `
-                <div class="actividad-box">
-                    ${actividad}
-                </div>
-            `).join('');
-            
-            document.getElementById('actividades-posteriores-container').innerHTML = actividadesHtml;
-        }
-
-        function volverResultados() {
-            mostrarPantalla('pantalla-resultados');
-        }
-
-        function mostrarModalGuardar() {
-            document.getElementById('modal-guardar').classList.add('active');
-            document.getElementById('nombre-lectura').value = '';
-            document.getElementById('nombre-lectura').focus();
-        }
-
-        function mostrarModalGuardarDesdeInput() {
-            const jsonInput = document.getElementById('json-input').value;
-            
-            if (!jsonInput.trim()) {
-                alert('Por favor, pega primero el JSON de ChatGPT antes de guardar');
+        function procesarJSONTexto() {
+            const jsonText = document.getElementById('json-text-input').value;
+            if (!jsonText.trim()) {
+                mostrarResultadoCarga('error', 'Por favor, pega el JSON');
                 return;
             }
-
             try {
-                const data = JSON.parse(jsonInput);
-                
-                // Validar campos básicos
-                if (!data.titulo || !data.texto || !data.preguntas) {
-                    alert('El JSON no tiene todos los campos necesarios');
-                    return;
-                }
-                
-                // Añadir actividades posteriores
-                const actividades = actividadesPosteriores[app.curso];
-                const mezcladas = [...actividades].sort(() => Math.random() - 0.5);
-                data.actividadesPosteriores = mezcladas.slice(0, 2);
-                
-                app.lecturaData = data;
-                app.respuestas = {};
-                
-                // Ahora mostramos el modal de guardar
-                mostrarModalGuardar();
-            } catch (e) {
-                console.error('Error:', e);
-                alert('Error al procesar el JSON. Verifica que esté correcto.\n\nError: ' + e.message);
+                const jsonData = JSON.parse(jsonText);
+                procesarJSON(jsonData);
+            } catch (error) {
+                mostrarResultadoCarga('error', 'Error al procesar el JSON: ' + error.message);
             }
         }
 
-        function cerrarModalGuardar() {
-            document.getElementById('modal-guardar').classList.remove('active');
-        }
-
-        function guardarLectura() {
-            const nombre = document.getElementById('nombre-lectura').value.trim();
-            
-            if (!nombre) {
-                alert('Por favor, escribe un nombre para la lectura');
+        function procesarJSON(jsonData) {
+            if (!validarEstructuraJSON(jsonData)) {
+                mostrarResultadoCarga('error', 'El JSON no tiene la estructura correcta');
                 return;
             }
-
-            if (!app.lecturaData) {
-                alert('No hay datos de lectura para guardar');
-                return;
-            }
-
-            const lecturas = JSON.parse(localStorage.getItem('lecturasGuardadas') || '[]');
-            const nuevaLectura = {
-                id: Date.now(),
-                nombre: nombre,
-                curso: app.curso,
-                modo: app.modo,
-                trimestre: app.trimestre,
-                tema: app.tema,
-                valor: app.valor,
-                fecha: new Date().toLocaleDateString('es-ES'),
-                data: app.lecturaData,
-                respuestas: app.respuestas
-            };
-
-            lecturas.push(nuevaLectura);
-            localStorage.setItem('lecturasGuardadas', JSON.stringify(lecturas));
-            
-            cerrarModalGuardar();
-            actualizarContadorGuardadas();
-            
-            const indicator = document.createElement('div');
-            indicator.className = 'copy-indicator';
-            indicator.innerHTML = '✅ ¡Lectura guardada correctamente!';
-            indicator.style.background = '#10b981';
-            document.body.appendChild(indicator);
-            
+            guardarLectura(jsonData);
+            mostrarResultadoCarga('success', `✅ Lectura "${jsonData.titulo}" cargada correctamente`);
+            mostrarLecturasGuardadas();
             setTimeout(() => {
-                indicator.remove();
-            }, 3000);
-            
-            console.log('Lectura guardada:', nuevaLectura);
+                cerrarModalCargarLectura();
+                app.lecturaData = jsonData;
+                mostrarModalElegirModo();
+            }, 1500);
         }
 
-        function mostrarGuardadas() {
-            const lecturas = JSON.parse(localStorage.getItem('lecturasGuardadas') || '[]');
-            mostrarPantalla('pantalla-guardadas');
-            
-            if (lecturas.length === 0) {
-                document.getElementById('lecturas-guardadas-container').innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px;">
-                        <div style="font-size: 4em; margin-bottom: 20px;">📚</div>
-                        <p style="font-size: 1.3em; color: #6b7280; margin-bottom: 30px;">No hay lecturas guardadas todavía</p>
-                        <button class="btn btn-primary" onclick="cerrarGuardadas()">Crear primera lectura</button>
-                    </div>
-                `;
-            } else {
-                const lecturasHtml = lecturas.map((lectura, idx) => `
-                    <div class="lectura-guardada">
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <div style="flex: 1;">
-                                <h3 style="font-size: 1.3em; margin-bottom: 10px;">
-                                    ${cursosInfo[lectura.curso].emoji} ${lectura.nombre}
-                                </h3>
-                                <p style="color: #6b7280; margin: 5px 0;">
-                                    <strong>Curso:</strong> ${cursosInfo[lectura.curso].nombre}
-                                    ${lectura.trimestre ? ` - ${lectura.trimestre}.º Trimestre` : ''}
-                                </p>
-                                ${lectura.tema ? `<p style="color: #6b7280; margin: 5px 0;"><strong>Tema:</strong> ${lectura.tema}</p>` : ''}
-                                ${lectura.valor ? `<p style="color: #6b7280; margin: 5px 0;"><strong>Valor:</strong> ${lectura.valor}</p>` : ''}
-                                <p style="color: #9ca3af; font-size: 0.9em; margin-top: 10px;">Guardada el ${lectura.fecha}</p>
-                            </div>
-                            <div style="display: flex; gap: 10px; margin-left: 20px;">
-                                <button class="btn btn-success" onclick="cargarLecturaById(${lectura.id})">Abrir</button>
-                                <button class="btn btn-danger" onclick="eliminarLectura(${lectura.id})">Eliminar</button>
-                            </div>
+        function validarEstructuraJSON(data) {
+            return ['titulo', 'texto', 'preguntas'].every(campo => data.hasOwnProperty(campo));
+        }
+
+        function mostrarResultadoCarga(tipo, mensaje) {
+            document.getElementById('resultado-carga').innerHTML = `
+                <div class="alert alert-${tipo === 'success' ? 'success' : 'warning'}">${mensaje}</div>
+            `;
+        }
+
+        function guardarLectura(data) {
+            if (!data.actividadesPosteriores || data.actividadesPosteriores.length === 0) {
+                const actividades = actividadesPosteriores[app.curso];
+                const mezcladas = [...actividades].sort(() => Math.random() - 0.5);
+                data.actividadesPosteriores = mezcladas.slice(0, 2);
+            }
+            data.id = Date.now();
+            data.fechaGuardado = new Date().toISOString();
+            data.cursoGuardado = app.curso;
+            let lecturas = JSON.parse(localStorage.getItem('lecturasGuardadas') || '[]');
+            lecturas.push(data);
+            localStorage.setItem('lecturasGuardadas', JSON.stringify(lecturas));
+            app.lecturasGuardadas = lecturas;
+        }
+
+        function cargarLecturasGuardadas() {
+            app.lecturasGuardadas = JSON.parse(localStorage.getItem('lecturasGuardadas') || '[]');
+        }
+
+        function mostrarLecturasGuardadas() {
+            const container = document.getElementById('lecturas-guardadas-lista');
+            if (!app.curso) {
+                container.innerHTML = '';
+                return;
+            }
+            const lecturasCurso = app.lecturasGuardadas.filter(l => l.cursoGuardado === app.curso);
+            if (lecturasCurso.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            let html = '<div style="margin-top: 40px;"><h3 style="color: #667eea; margin-bottom: 20px;">📚 Lecturas guardadas</h3>';
+            lecturasCurso.forEach(lectura => {
+                const fecha = new Date(lectura.fechaGuardado).toLocaleDateString('es-ES');
+                html += `
+                    <div class="lectura-item">
+                        <div class="lectura-item-title">📖 ${lectura.titulo}</div>
+                        <div class="lectura-item-info">📅 ${fecha} | 📝 ${lectura.preguntas.length} preguntas</div>
+                        ${lectura.tema ? `<div class="lectura-item-info">🎯 ${lectura.tema}</div>` : ''}
+                        <div class="lectura-item-actions">
+                            <button class="btn btn-success btn-small" onclick="usarLecturaGuardada(${lectura.id})">🎮 Usar</button>
+                            <button class="btn btn-danger btn-small" onclick="eliminarLectura(${lectura.id})">🗑️ Eliminar</button>
                         </div>
                     </div>
-                `).join('');
-                
-                document.getElementById('lecturas-guardadas-container').innerHTML = lecturasHtml;
-            }
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
         }
 
-        function cargarLectura(lectura) {
-            app.modo = lectura.modo;
-            app.curso = lectura.curso;
-            app.trimestre = lectura.trimestre;
-            app.tema = lectura.tema;
-            app.valor = lectura.valor;
-            app.lecturaData = lectura.data;
-            app.respuestas = {};
-            app.currentQuestion = 0;
-            
-            mostrarActividadesPrevias();
-        }
-
-        function cargarLecturaById(id) {
-            const lecturas = JSON.parse(localStorage.getItem('lecturasGuardadas') || '[]');
-            const lectura = lecturas.find(l => l.id === id);
-            
-            if (lectura) {
-                cargarLectura(lectura);
+        function usarLecturaGuardada(id) {
+            const lectura = app.lecturasGuardadas.find(l => l.id === id);
+            if (!lectura) {
+                alert('Lectura no encontrada');
+                return;
             }
+            app.lecturaData = lectura;
+            mostrarModalElegirModo();
         }
 
         function eliminarLectura(id) {
             if (!confirm('¿Seguro que quieres eliminar esta lectura?')) return;
-            
-            const lecturas = JSON.parse(localStorage.getItem('lecturasGuardadas') || '[]');
-            const nuevasLecturas = lecturas.filter(l => l.id !== id);
-            localStorage.setItem('lecturasGuardadas', JSON.stringify(nuevasLecturas));
-            
-            actualizarContadorGuardadas();
-            mostrarGuardadas();
+            app.lecturasGuardadas = app.lecturasGuardadas.filter(l => l.id !== id);
+            localStorage.setItem('lecturasGuardadas', JSON.stringify(app.lecturasGuardadas));
+            mostrarLecturasGuardadas();
         }
 
-        function cerrarGuardadas() {
-            mostrarPantalla('pantalla-config');
+        function mostrarModalElegirModo() {
+            document.getElementById('modal-elegir-modo').classList.add('active');
         }
 
-        function volverInicio() {
-            app.modo = null;
-            app.curso = null;
-            app.trimestre = null;
-            app.tema = '';
-            app.valor = '';
-            app.vocabulario = '';
-            app.lecturaData = null;
-            app.respuestas = {};
-            app.currentQuestion = 0;
-            
-            document.getElementById('tema').value = '';
-            document.getElementById('valor').value = '';
-            document.getElementById('vocabulario').value = '';
-            document.getElementById('json-input').value = '';
-            
-            mostrarPantalla('pantalla-config');
+        function iniciarModoInteractivo() {
+            document.getElementById('modal-elegir-modo').classList.remove('active');
+            app.pasoActual = 0;
+            app.preguntaActual = 0;
+            app.respuestasUsuario = [];
+            document.getElementById('pantalla-principal').classList.add('hidden');
+            document.getElementById('pantalla-interactiva').classList.remove('hidden');
+            mostrarPasoActual();
         }
 
-        function mostrarPantalla(id) {
-            document.querySelectorAll('.card').forEach(el => {
-                el.classList.add('hidden');
-            });
-            document.getElementById(id).classList.remove('hidden');
+        function irDirectoAImprimir() {
+            document.getElementById('modal-elegir-modo').classList.remove('active');
+            mostrarModalSeleccionPreguntas();
         }
 
-        // ===== FUNCIONES DE IMPRESIÓN =====
+        function mostrarPasoActual() {
+            const data = app.lecturaData;
+            const contenido = document.getElementById('contenido-interactivo');
+            const totalPasos = 4 + data.preguntas.length;
+            const progreso = ((app.pasoActual + 1) / totalPasos) * 100;
+            document.getElementById('barra-progreso').style.width = progreso + '%';
 
-        let preguntasSeleccionadas = [];
+            if (app.pasoActual === 0) {
+                // Antes de leer
+                let html = '<div class="card-title">🎯 Antes de leer</div>';
+                
+                if (data.vocabulario && data.vocabulario.length > 0) {
+                    html += '<h3 style="color: #667eea; margin: 20px 0;">📚 Vocabulario importante</h3>';
+                    data.vocabulario.forEach(v => {
+                        html += `<div class="vocabulario-item">${v}</div>`;
+                    });
+                }
+                
+                if (data.contexto) {
+                    html += '<h3 style="color: #667eea; margin: 30px 0 15px 0;">💭 Pensemos antes de leer</h3>';
+                    html += `<div class="print-content">${data.contexto}</div>`;
+                }
+                
+                if (data.predicciones && data.predicciones.length > 0) {
+                    html += '<h3 style="color: #667eea; margin: 30px 0 15px 0;">🔮 Preguntas previas</h3>';
+                    data.predicciones.forEach((p, i) => {
+                        html += `<div class="actividad-post"><strong>${i + 1}.</strong> ${p}</div>`;
+                    });
+                }
+                
+                contenido.innerHTML = html;
+                
+            } else if (app.pasoActual === 1) {
+                // Lectura
+                contenido.innerHTML = `
+                    <div class="card-title">📖 Lectura</div>
+                    <h2 style="text-align: center; color: #667eea; margin: 30px 0;">${data.titulo}</h2>
+                    <div class="texto-lectura">${data.texto}</div>
+                `;
+                
+            } else if (app.pasoActual >= 2 && app.pasoActual < 2 + data.preguntas.length) {
+                // Preguntas
+                const indicePregunta = app.pasoActual - 2;
+                mostrarPregunta(indicePregunta);
+                
+            } else if (app.pasoActual === 2 + data.preguntas.length) {
+                // Resultado
+                mostrarResultado();
+                
+            } else if (app.pasoActual === 3 + data.preguntas.length) {
+                // Actividades posteriores
+                let html = '<div class="card-title">🎯 Después de leer</div>';
+                html += '<div class="alert alert-info"><strong>💡 Actividades orales</strong><br>Estas actividades se realizan en grupo de forma oral.</div>';
+                
+                if (data.actividadesPosteriores && data.actividadesPosteriores.length > 0) {
+                    data.actividadesPosteriores.forEach((actividad, i) => {
+                        html += `<div class="actividad-post"><strong>Actividad ${i + 1}:</strong><br>${actividad}</div>`;
+                    });
+                }
+                
+                html += '<div style="text-align: center; margin-top: 40px;">';
+                html += '<button class="btn btn-warning" style="width: auto; padding: 20px 40px;" onclick="irDirectoAImprimir()">🖨️ Imprimir esta lectura</button>';
+                html += '</div>';
+                
+                contenido.innerHTML = html;
+                document.getElementById('btn-siguiente').textContent = '✅ Finalizar';
+            }
+        }
 
-        function prepararImpresion() {
-            const jsonInput = document.getElementById('json-input').value;
+        function mostrarPregunta(indice) {
+            const pregunta = app.lecturaData.preguntas[indice];
+            const tipoEmojis = {
+                'literal': '📝',
+                'inferencial': '🤔',
+                'crítica': '💭',
+                'critica': '💭',
+                'valorativa': '⭐',
+                'léxico': '📚',
+                'lexico': '📚'
+            };
             
-            if (!jsonInput.trim()) {
-                alert('Por favor, pega primero el JSON de ChatGPT');
+            let html = `
+                <div class="pregunta-interactiva">
+                    <div class="pregunta-titulo">
+                        ${tipoEmojis[pregunta.tipo] || '❓'} Pregunta ${indice + 1} de ${app.lecturaData.preguntas.length}
+                        <span class="badge badge-tipo">${pregunta.tipo}</span>
+                    </div>
+                    <div class="pregunta-enunciado">${pregunta.pregunta}</div>
+            `;
+            
+            if (pregunta.opciones && pregunta.opciones.length > 0) {
+                pregunta.opciones.forEach((opcion, opIdx) => {
+                    const letra = String.fromCharCode(65 + opIdx);
+                    const seleccionada = app.respuestasUsuario[indice]?.opcionSeleccionada === opIdx;
+                    const respondida = app.respuestasUsuario[indice]?.respondida;
+                    
+                    let claseExtra = '';
+                    if (respondida) {
+                        if (opcion.esCorrecta) {
+                            claseExtra = 'correcta';
+                        } else if (seleccionada) {
+                            claseExtra = 'incorrecta';
+                        }
+                        claseExtra += ' disabled';
+                    } else if (seleccionada) {
+                        claseExtra = 'seleccionada';
+                    }
+                    
+                    html += `
+                        <div class="opcion-respuesta ${claseExtra}" onclick="seleccionarOpcion(${indice}, ${opIdx})">
+                            <strong>${letra})</strong> ${opcion.texto}
+                            ${respondida && opcion.esCorrecta ? ' ✓' : ''}
+                        </div>
+                    `;
+                });
+                
+                if (!app.respuestasUsuario[indice]?.respondida) {
+                    html += '<button class="btn btn-success" style="margin-top: 20px;" onclick="verificarRespuesta(' + indice + ')">✓ Verificar respuesta</button>';
+                }
+            }
+            
+            html += '</div>';
+            document.getElementById('contenido-interactivo').innerHTML = html;
+        }
+
+        function seleccionarOpcion(indicePregunta, indiceOpcion) {
+            if (app.respuestasUsuario[indicePregunta]?.respondida) return;
+            
+            if (!app.respuestasUsuario[indicePregunta]) {
+                app.respuestasUsuario[indicePregunta] = {};
+            }
+            app.respuestasUsuario[indicePregunta].opcionSeleccionada = indiceOpcion;
+            mostrarPregunta(indicePregunta);
+        }
+
+        function verificarRespuesta(indicePregunta) {
+            const respuesta = app.respuestasUsuario[indicePregunta];
+            if (!respuesta || respuesta.opcionSeleccionada === undefined) {
+                alert('Por favor, selecciona una respuesta');
                 return;
             }
+            
+            const pregunta = app.lecturaData.preguntas[indicePregunta];
+            const opcionSeleccionada = pregunta.opciones[respuesta.opcionSeleccionada];
+            
+            respuesta.respondida = true;
+            respuesta.correcta = opcionSeleccionada.esCorrecta;
+            
+            mostrarPregunta(indicePregunta);
+        }
 
-            try {
-                const data = JSON.parse(jsonInput);
-                
-                if (!data.titulo || !data.texto || !data.preguntas) {
-                    alert('El JSON no tiene todos los campos necesarios');
+        function mostrarResultado() {
+            const total = app.lecturaData.preguntas.length;
+            const correctas = app.respuestasUsuario.filter(r => r.correcta).length;
+            const porcentaje = Math.round((correctas / total) * 100);
+            
+            let emoji = '🎉';
+            let mensaje = '¡Excelente trabajo!';
+            if (porcentaje < 50) {
+                emoji = '💪';
+                mensaje = '¡Sigue practicando!';
+            } else if (porcentaje < 80) {
+                emoji = '👏';
+                mensaje = '¡Muy bien!';
+            }
+            
+            const html = `
+                <div class="resultado-final">
+                    <div style="font-size: 5em;">${emoji}</div>
+                    <h2 style="color: #667eea; margin: 20px 0;">${mensaje}</h2>
+                    <div class="puntuacion">${correctas} / ${total}</div>
+                    <div style="font-size: 1.5em; color: #6b7280;">${porcentaje}% de respuestas correctas</div>
+                </div>
+            `;
+            
+            document.getElementById('contenido-interactivo').innerHTML = html;
+        }
+
+        function siguientePaso() {
+            const data = app.lecturaData;
+            const totalPasos = 4 + data.preguntas.length;
+            
+            // Si estamos en una pregunta, verificar que se haya respondido
+            if (app.pasoActual >= 2 && app.pasoActual < 2 + data.preguntas.length) {
+                const indicePregunta = app.pasoActual - 2;
+                if (!app.respuestasUsuario[indicePregunta]?.respondida) {
+                    alert('Por favor, verifica tu respuesta antes de continuar');
                     return;
                 }
-                
-                // Añadir actividades posteriores si no las tiene
-                if (!data.actividadesPosteriores) {
-                    const actividades = actividadesPosteriores[app.curso];
-                    const mezcladas = [...actividades].sort(() => Math.random() - 0.5);
-                    data.actividadesPosteriores = mezcladas.slice(0, 2);
-                }
-                
-                app.lecturaData = data;
-                
-                mostrarModalSeleccionPreguntas();
-            } catch (e) {
-                alert('Error al procesar el JSON. Verifica que esté correcto.\n\nError: ' + e.message);
+            }
+            
+            if (app.pasoActual < totalPasos - 1) {
+                app.pasoActual++;
+                mostrarPasoActual();
+            } else {
+                volverAlMenu();
             }
         }
+
+        function volverAlMenu() {
+            document.getElementById('pantalla-interactiva').classList.add('hidden');
+            document.getElementById('pantalla-principal').classList.remove('hidden');
+            app.pasoActual = 0;
+            app.respuestasUsuario = [];
+        }
+
+        // Funciones de impresión
+        let preguntasSeleccionadas = [];
 
         function mostrarModalSeleccionPreguntas() {
             document.getElementById('modal-seleccionar-preguntas').classList.add('active');
             
             const listaHtml = app.lecturaData.preguntas.map((pregunta, idx) => {
                 const tipoEmojis = {
-                    'literal': '📝',
-                    'inferencial': '🤔',
-                    'critica': '💭',
-                    'valorativa': '⭐'
+                    'literal': '📝', 'inferencial': '🤔', 'crítica': '💭', 'critica': '💭',
+                    'valorativa': '⭐', 'léxico': '📚', 'lexico': '📚'
                 };
                 
                 return `
-                    <div class="checkbox-item" onclick="togglePregunta(${idx})">
-                        <input type="checkbox" id="pregunta-${idx}" checked onchange="event.stopPropagation()">
-                        <label for="pregunta-${idx}">
+                    <div style="padding: 15px; border: 2px solid #e5e7eb; border-radius: 10px; margin: 10px 0; cursor: pointer;" onclick="togglePreguntaImprimir(${idx})">
+                        <input type="checkbox" id="pregunta-${idx}" checked style="margin-right: 10px;">
+                        <label for="pregunta-${idx}" style="cursor: pointer;">
                             <strong>${tipoEmojis[pregunta.tipo] || '❓'} Pregunta ${idx + 1}</strong>
                             <div style="margin-top: 5px; color: #6b7280;">${pregunta.pregunta}</div>
-                            <div style="margin-top: 3px; font-size: 0.9em;">
-                                <span class="badge badge-primary">${pregunta.tipo}</span>
-                            </div>
                         </label>
                     </div>
                 `;
             }).join('');
             
             document.getElementById('lista-preguntas-imprimir').innerHTML = listaHtml;
-            
-            // Seleccionar todas por defecto
             preguntasSeleccionadas = app.lecturaData.preguntas.map((_, idx) => idx);
         }
 
-        function togglePregunta(idx) {
+        function togglePreguntaImprimir(idx) {
             const checkbox = document.getElementById(`pregunta-${idx}`);
             checkbox.checked = !checkbox.checked;
             
@@ -1681,7 +1295,7 @@ IMPORTANTE:
         }
 
         function seleccionarTodasPreguntas(seleccionar) {
-            document.querySelectorAll('.checkbox-item input[type="checkbox"]').forEach((checkbox, idx) => {
+            document.querySelectorAll('#lista-preguntas-imprimir input[type="checkbox"]').forEach((checkbox, idx) => {
                 checkbox.checked = seleccionar;
             });
             
@@ -1698,17 +1312,12 @@ IMPORTANTE:
 
         function imprimirLectura() {
             if (preguntasSeleccionadas.length === 0) {
-                alert('Por favor, selecciona al menos una pregunta para imprimir');
+                alert('Selecciona al menos una pregunta');
                 return;
             }
-            
             generarPaginaImpresion();
             cerrarModalPreguntas();
-            
-            // Pequeño delay para que se renderice antes de imprimir
-            setTimeout(() => {
-                window.print();
-            }, 100);
+            setTimeout(() => window.print(), 100);
         }
 
         function generarPaginaImpresion() {
@@ -1720,109 +1329,61 @@ IMPORTANTE:
                     <h1>📚 ${data.titulo}</h1>
                     <div class="school">CEIP Capitulaciones Santa Fe</div>
                     <div style="color: #9ca3af; margin-top: 10px;">${cursosNombre}</div>
-                    <div style="color: #9ca3af; font-size: 0.9em; margin-top: 5px;">
-                        ${new Date().toLocaleDateString('es-ES', { 
-                            weekday: 'long', 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                        })}
-                    </div>
                 </div>
             `;
             
-            // ANTES DE LEER
-            html += `<div class="print-section">
-                <div class="print-section-title">🎯 Antes de leer</div>`;
-            
-            // Vocabulario
+            // Antes de leer
+            html += '<div class="print-section"><div class="print-section-title">🎯 Antes de leer</div>';
             if (data.vocabulario && data.vocabulario.length > 0) {
-                html += `<div style="margin: 20px 0;">
-                    <h3 style="color: #667eea; font-size: 1.3em; margin-bottom: 15px;">📚 Vocabulario importante</h3>`;
-                data.vocabulario.forEach(v => {
-                    html += `<div class="print-vocab-item">${v}</div>`;
-                });
-                html += `</div>`;
+                html += '<h3 style="color: #667eea; margin-bottom: 15px;">📚 Vocabulario</h3>';
+                data.vocabulario.forEach(v => html += `<div class="print-vocab-item">${v}</div>`);
             }
-            
-            // Contexto/Predicciones
             if (data.contexto) {
-                html += `<div style="margin: 20px 0;">
-                    <h3 style="color: #667eea; font-size: 1.3em; margin-bottom: 15px;">💭 Pensemos antes de leer</h3>
-                    <div class="print-content">${data.contexto}</div>
-                </div>`;
+                html += `<h3 style="color: #667eea; margin: 20px 0 15px;">💭 Contexto</h3><div class="print-content">${data.contexto}</div>`;
             }
-            
             if (data.predicciones && data.predicciones.length > 0) {
-                html += `<div style="margin: 20px 0;">
-                    <h3 style="color: #667eea; font-size: 1.3em; margin-bottom: 15px;">🔮 ¿Qué crees que pasará?</h3>`;
-                data.predicciones.forEach(p => {
-                    html += `<div class="print-content">${p}</div>`;
-                });
-                html += `</div>`;
+                html += '<h3 style="color: #667eea; margin: 20px 0 15px;">🔮 Preguntas previas</h3>';
+                data.predicciones.forEach(p => html += `<div class="print-content">${p}</div>`);
             }
+            html += '</div>';
             
-            html += `</div>`;
+            // Lectura
+            html += `
+                <div class="print-section" style="page-break-before: always;">
+                    <div class="print-section-title">📖 Lectura</div>
+                    <div class="print-titulo-lectura">${data.titulo}</div>
+                    <div class="print-texto-lectura">${data.texto}</div>
+                </div>
+            `;
             
-            // DURANTE LA LECTURA
-            html += `<div class="print-section" style="page-break-before: always;">
-                <div class="print-section-title">📖 Lectura</div>
-                <div class="print-titulo-lectura">${data.titulo}</div>
-                <div class="print-texto-lectura">${data.texto}</div>
-            </div>`;
+            // Preguntas
+            html += '<div class="print-section" style="page-break-before: always;"><div class="print-section-title">❓ Preguntas</div>';
+            preguntasSeleccionadas.forEach((idx, num) => {
+                const p = data.preguntas[idx];
+                html += `<div class="print-pregunta"><div class="print-pregunta-numero">Pregunta ${num + 1}</div><div class="print-pregunta-texto">${p.pregunta}</div>`;
+                if (p.opciones && p.opciones.length > 0) {
+                    p.opciones.forEach((op, opIdx) => {
+                        const letra = String.fromCharCode(65 + opIdx);
+                        html += `<div class="print-opcion"><div class="print-opcion-checkbox"></div><div><strong>${letra})</strong> ${op.texto}</div></div>`;
+                    });
+                }
+                html += '</div>';
+            });
+            html += '</div>';
             
-            // PREGUNTAS DE COMPRENSIÓN
-            if (preguntasSeleccionadas.length > 0) {
-                html += `<div class="print-section" style="page-break-before: always;">
-                    <div class="print-section-title">❓ Preguntas de comprensión</div>`;
-                
-                preguntasSeleccionadas.forEach((idx, numero) => {
-                    const pregunta = data.preguntas[idx];
-                    const tipoEmojis = {
-                        'literal': '📝',
-                        'inferencial': '🤔',
-                        'critica': '💭',
-                        'valorativa': '⭐'
-                    };
-                    
-                    html += `<div class="print-pregunta">
-                        <div class="print-pregunta-numero">
-                            ${tipoEmojis[pregunta.tipo] || '❓'} Pregunta ${numero + 1}
-                            <span style="float: right; font-size: 0.8em; color: #6b7280;">(${pregunta.tipo})</span>
-                        </div>
-                        <div class="print-pregunta-texto">${pregunta.pregunta}</div>
-                        <div class="print-respuesta-espacio"></div>
-                    </div>`;
-                });
-                
-                html += `</div>`;
-            }
-            
-            // DESPUÉS DE LEER
+            // Actividades posteriores
             if (data.actividadesPosteriores && data.actividadesPosteriores.length > 0) {
-                html += `<div class="print-section" style="page-break-before: always;">
-                    <div class="print-section-title">🎯 Después de leer (Actividades orales)</div>
-                    <div class="alert alert-info" style="margin: 20px 0; padding: 15px; background: #dbeafe; border: 2px solid #3b82f6; border-radius: 10px;">
-                        💡 <strong>Para el maestro:</strong> Estas actividades se realizan en grupo de forma oral.
-                    </div>`;
-                
-                data.actividadesPosteriores.forEach((actividad, idx) => {
-                    html += `<div class="print-content" style="margin: 15px 0;">
-                        <strong>Actividad ${idx + 1}:</strong><br>
-                        ${actividad}
-                    </div>`;
+                html += '<div class="print-section" style="page-break-before: always;"><div class="print-section-title">🎯 Después de leer</div>';
+                data.actividadesPosteriores.forEach((act, i) => {
+                    html += `<div class="print-content"><strong>Actividad ${i + 1}:</strong><br>${act}</div>`;
                 });
-                
-                html += `</div>`;
+                html += '</div>';
             }
-            
-            // Footer en impresión
-            html += `<div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 2px solid #e5e7eb; color: #9ca3af;">
-                Made with ❤️ by Víctor
-            </div>`;
             
             document.getElementById('pagina-impresion').innerHTML = html;
         }
+
+        init();
     </script>
 </body>
 </html>
